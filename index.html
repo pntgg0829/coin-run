@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced Coin Run：When / While 10題闖關版</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root{
+      --blue:#2d8cff; --green:#33c76d; --yellow:#ffd84d; --orange:#ff8a3d;
+      --red:#ff5252; --dark:#1f2937; --card:rgba(255,255,255,.97);
+      --purple:#8b5cf6; --sky:#dff4ff; --ink:#334155;
+    }
+    body{overscroll-behavior:none;
+      margin:0; min-height:100vh;
+      font-family:Arial,"Microsoft JhengHei","PingFang TC",sans-serif;
+      color:var(--dark);
+      background:
+        linear-gradient(135deg, rgba(45,140,255,.18), rgba(255,216,77,.18)),
+        radial-gradient(circle at top left, #bde9ff, transparent 34%),
+        radial-gradient(circle at bottom right, #e9d5ff, transparent 36%),
+        #eef8ff;
+    }
+    .container{ width:min(1120px,100%); margin:0 auto; padding:20px; }
+    .card{
+      background:var(--card); border-radius:26px; padding:24px; margin-bottom:20px;
+      box-shadow:0 12px 30px rgba(31,41,55,.14); border:2px solid rgba(255,255,255,.85);
+    }
+    h1{
+      margin:0 0 10px; text-align:center; color:var(--blue);
+      font-size:clamp(30px,5vw,52px); text-shadow:2px 2px 0 rgba(255,216,77,.75);
+    }
+    h2{ margin:0 0 12px; color:#1663c7; }
+    .subtitle{
+      text-align:center; color:#475569; font-size:20px; line-height:1.6;
+      margin-bottom:20px; font-weight:800;
+    }
+    .hidden{ display:none !important; }
+    .rule-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin:20px 0; }
+    .rule{
+      border-radius:22px; padding:18px; font-size:18px; line-height:1.7; font-weight:800;
+    }
+    .when-rule{ background:#e0f2fe; border:4px solid var(--blue); }
+    .while-rule{ background:#dcfce7; border:4px solid var(--green); }
+    .keyword{
+      display:inline-block; padding:4px 12px; border-radius:999px; color:#fff; font-weight:1000;
+    }
+    .kw-when{ background:var(--blue); }
+    .kw-while{ background:var(--green); }
+    .btn{
+      border:none; border-radius:18px; padding:14px 24px; font-size:20px; font-weight:1000;
+      cursor:pointer; font-family:inherit; transition:.16s ease;
+    }
+    .btn:hover{ transform:translateY(-2px) scale(1.02); box-shadow:0 8px 18px rgba(31,41,55,.16); }
+    .primary{ background:var(--blue); color:white; }
+    .orange{ background:var(--orange); color:white; }
+    .ghost{ background:#f1f5f9; color:#334155; }
+    .center-row{
+      display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:18px;
+    }
+    .topbar{
+      display:grid; grid-template-columns:repeat(6,auto); gap:10px; align-items:center;
+      justify-content:space-between; margin-bottom:16px;
+    }
+    .badge{
+      background:#f8fafc; border:2px solid #e2e8f0; padding:10px 14px;
+      border-radius:999px; font-weight:1000; white-space:nowrap;
+    }
+    .game-title-box{
+      background:linear-gradient(135deg,#fff7ed,#fef3c7);
+      border:4px solid var(--orange); border-radius:22px; padding:14px 18px; margin-bottom:14px;
+      text-align:center; font-size:18px; font-weight:900; line-height:1.5;
+    }
+    .target-sentence{
+      font-size:clamp(22px,3vw,30px); font-weight:1000; color:#7c2d12; margin-top:8px;
+    }
+    .map-name{ color:#6d28d9; font-weight:1000; margin-top:6px; font-size:18px; }
+    .game-help{
+      margin-top:14px; background:#f8fafc; border-radius:16px; padding:14px;
+      font-size:17px; line-height:1.7; font-weight:800; color:#334155;
+    }
+    .feedback{
+      min-height:62px; text-align:center; font-size:22px; font-weight:1000;
+      line-height:1.55; margin:10px 0 16px;
+    }
+    canvas{touch-action:none;
+      width:100%; max-width:100%; display:block;
+      background:linear-gradient(#8fd3ff,#dff4ff 58%,#fef3c7);
+      border-radius:20px; border:4px solid #cbd5e1;
+    }
+    .result-big{
+      text-align:center; font-size:52px; color:var(--orange); font-weight:1000;
+      margin:10px 0; text-shadow:2px 2px 0 #fff3bf;
+    }
+    .review-item{
+      background:#f8fafc; border-left:8px solid var(--blue); border-radius:14px;
+      padding:12px; margin-bottom:10px; line-height:1.6; font-size:16px;
+    }
+
+    .mobile-controls{
+      display:none;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:14px;
+      margin-top:14px;
+      user-select:none;
+      touch-action:none;
+    }
+    .touch-btn{
+      border:none;
+      border-radius:22px;
+      padding:18px 12px;
+      font-size:28px;
+      font-weight:1000;
+      background:#e0f2fe;
+      color:#075985;
+      border:4px solid #38bdf8;
+      box-shadow:0 6px 14px rgba(31,41,55,.14);
+      touch-action:none;
+      -webkit-user-select:none;
+      user-select:none;
+    }
+    .touch-btn.jump{
+      background:#dcfce7;
+      color:#166534;
+      border-color:#35c96f;
+    }
+    .touch-btn:active{
+      transform:scale(.96);
+      background:#bfdbfe;
+    }
+    @media (hover:none), (pointer:coarse){
+      .mobile-controls{display:grid;}
+    }
+
+    @media(max-width:860px){
+      .rule-grid{ grid-template-columns:1fr; }
+      .topbar{ grid-template-columns:repeat(2,auto); justify-content:center; }
+      .card{ padding:18px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <section id="startScreen" class="card">
+    <h1>Advanced Coin Run</h1>
+    <p class="subtitle">只保留第三關版本：10 題 when / while 動作闖關。<br>每一題地圖都不一樣，難度會逐步提高。</p>
+
+    <div class="rule-grid">
+      <div class="rule when-rule">
+        <span class="keyword kw-when">WHEN</span><br>
+        規則：<b>short action + long action</b><br>
+        例子：The lights went out <b>when</b> I was building a house.
+      </div>
+      <div class="rule while-rule">
+        <span class="keyword kw-while">WHILE</span><br>
+        規則：<b>long action + long action</b><br>
+        例子：I was chatting <b>while</b> I was building a house.
+      </div>
+    </div>
+
+    <div class="game-help">
+      <b>操作：</b> ← → 移動，↑ 或 Space 跳躍。<br>
+      <b>玩法：</b> 讀題後，控制 Roblox 小人先收集至少 <b>2 個金幣</b>，再避開炸彈和陷阱，最後跳到正確的 <b>WHEN</b> 或 <b>WHILE</b> 平台。<br>
+      <b>注意：</b> 每一題的地圖設計都不同；第 5 題開始會出現會移動的小平台。
+    </div>
+
+    <div class="center-row">
+      <button class="btn primary" onclick="startGame()">開始第 3 關挑戰</button>
+    </div>
+  </section>
+
+  <section id="gameScreen" class="card hidden">
+    <h1>Stage 3：Advanced Coin Run</h1>
+    <div class="topbar">
+      <div class="badge">Round <span id="roundNo">1</span>/<span id="roundTotal">10</span></div>
+      <div class="badge">Score <span id="score">0</span></div>
+      <div class="badge">Coins 🟡 <span id="coins">0</span></div>
+      <div class="badge">Round Coins 🟡 <span id="roundCoins">0</span>/2</div>
+      <div class="badge">Lives ❤️ <span id="lives">3</span></div>
+      <div class="badge">Correct ✔ <span id="correctCount">0</span></div>
+      <div class="badge">Map <span id="difficultyTag">1</span></div>
+    </div>
+
+    <div class="game-title-box">
+      Jump onto the correct answer platform!
+      <div id="mapName" class="map-name">Map Name</div>
+      <div id="sentence" class="target-sentence">Sentence here</div>
+    </div>
+
+    <canvas id="gameCanvas" width="1000" height="460"></canvas>
+
+    <div class="mobile-controls" aria-label="Mobile touch controls">
+      <button class="touch-btn" id="leftTouch">⬅️</button>
+      <button class="touch-btn jump" id="jumpTouch">⬆️ 跳</button>
+      <button class="touch-btn" id="rightTouch">➡️</button>
+    </div>
+
+    <div class="game-help">
+      <b>規則提醒：</b> WHEN = short action + long action；WHILE = long action + long action。<br>
+      <b>提示：</b> 先看句子，再收集至少 2 個金幣，最後看 platform 上的字並跳到正確答案。<br><b>更新：</b> 第 5 題開始有會移動的小平台；WHEN / WHILE 每題會隨機出現在左邊或右邊。
+    </div>
+
+    <div id="feedback" class="feedback"></div>
+
+    <div class="center-row">
+      <button id="nextBtn" class="btn orange hidden" onclick="nextRound()">下一題</button>
+      <button id="finishBtn" class="btn primary hidden" onclick="showResult()">完成遊戲</button>
+    </div>
+  </section>
+
+  <section id="resultScreen" class="card hidden">
+    <h1>Quest Complete!</h1>
+    <div id="finalScore" class="result-big"></div>
+    <p id="finalMessage" class="subtitle"></p>
+    <div class="center-row">
+      <button class="btn primary" onclick="restartGame()">再玩一次</button>
+      <button class="btn ghost" onclick="toggleReview()">顯示作答紀錄</button>
+    </div>
+    <div id="reviewBox" class="hidden" style="margin-top:20px;"></div>
+  </section>
+</div>
+
+<script>
+const QUESTIONS = [
+  { sentence:"The lights went out _____ I was building a castle in Brookhaven.", answer:"when", explain:"Use WHEN because “the lights went out” is a short action, and “I was building” is a long action." },
+  { sentence:"I was collecting wood _____ I was talking to my teammate in voice chat.", answer:"while", explain:"Use WHILE because “I was collecting” and “I was talking” are both long actions." },
+  { sentence:"My pet dragon escaped _____ I was feeding it in Adopt Me.", answer:"when", explain:"Use WHEN because “escaped” is a short action, and “I was feeding it” is a long action." },
+  { sentence:"I was fishing by the lake _____ I was listening to the game music.", answer:"while", explain:"Use WHILE because “I was fishing” and “I was listening” are both long actions." },
+  { sentence:"The gate closed _____ I was running across the bridge.", answer:"when", explain:"Use WHEN because “the gate closed” is a short action, and “I was running” is a long action." },
+  { sentence:"I was decorating my pizza shop _____ I was chatting with my cousin.", answer:"while", explain:"Use WHILE because “I was decorating” and “I was chatting” are both long actions." },
+  { sentence:"My screen froze _____ I was trading items at the market.", answer:"when", explain:"Use WHEN because “froze” is a short action, and “I was trading” is a long action." },
+  { sentence:"I was searching the maze _____ I was carrying a lantern.", answer:"while", explain:"Use WHILE because “I was searching” and “I was carrying” are both long actions." },
+  { sentence:"The teacher sent a notice _____ I was finishing my obstacle course.", answer:"when", explain:"Use WHEN because “sent a notice” is a short action, and “I was finishing” is a long action." },
+  { sentence:"I was steering the boat _____ I was watching the treasure map.", answer:"while", explain:"Use WHILE because “I was steering” and “I was watching” are both long actions." }
+];
+
+const MAPS = [
+  {
+    name:"1. Safe Climb",
+    spawn:{x:40,y:330},
+    grounds:[
+      {x:0,y:400,w:1000,h:60},
+      {x:170,y:340,w:120,h:18},
+      {x:350,y:285,w:120,h:18},
+      {x:560,y:235,w:120,h:18},
+      {x:740,y:285,w:120,h:18}
+    ],
+    answerPlatforms:[
+      {x:110,y:175,w:180,h:24,answer:"when",label:"WHEN",color:"#60a5fa"},
+      {x:710,y:175,w:180,h:24,answer:"while",label:"WHILE",color:"#4ade80"}
+    ],
+    spikes:[{x:230,y:392,w:56,h:8},{x:650,y:392,w:56,h:8}],
+    bombs:[{x:470,y:374,r:14,vx:1.2,min:420,max:600}],
+    fallingBombs:[],
+    lavaPits:[],
+    coins:[{x:220,y:300,r:10},{x:410,y:245,r:10},{x:620,y:195,r:10},{x:800,y:245,r:10}]
+  },
+  {
+    name:"2. Split Bridge",
+    spawn:{x:40,y:330},
+    grounds:[
+      {x:0,y:400,w:220,h:60},
+      {x:330,y:400,w:670,h:60},
+      {x:250,y:320,w:110,h:18},
+      {x:440,y:255,w:120,h:18},
+      {x:650,y:320,w:120,h:18}
+    ],
+    answerPlatforms:[
+      {x:80,y:210,w:180,h:24,answer:"while",label:"WHILE",color:"#4ade80"},
+      {x:730,y:195,w:180,h:24,answer:"when",label:"WHEN",color:"#60a5fa"}
+    ],
+    spikes:[{x:500,y:392,w:60,h:8},{x:840,y:392,w:60,h:8}],
+    bombs:[{x:600,y:374,r:14,vx:-1.4,min:520,max:760}],
+    fallingBombs:[],
+    lavaPits:[{x:220,y:404,w:110,h:56}],
+    coins:[{x:300,y:280,r:10},{x:500,y:215,r:10},{x:710,y:280,r:10}]
+  },
+  {
+    name:"3. Zigzag Sky",
+    spawn:{x:40,y:330},
+    grounds:[
+      {x:0,y:400,w:260,h:60},
+      {x:340,y:400,w:660,h:60},
+      {x:250,y:330,w:110,h:18},
+      {x:410,y:260,w:110,h:18},
+      {x:580,y:310,w:110,h:18},
+      {x:740,y:240,w:110,h:18}
+    ],
+    answerPlatforms:[
+      {x:130,y:165,w:180,h:24,answer:"when",label:"WHEN",color:"#60a5fa"},
+      {x:700,y:165,w:180,h:24,answer:"while",label:"WHILE",color:"#4ade80"}
+    ],
+    spikes:[{x:180,y:392,w:54,h:8},{x:470,y:392,w:54,h:8},{x:900,y:392,w:54,h:8}],
+    bombs:[{x:320,y:304,r:14,vx:1.4,min:250,max:360}],
+    fallingBombs:[{x:540,y:20,r:13,vy:1.6,resetY:20}],
+    lavaPits:[{x:260,y:404,w:80,h:56}],
+    coins:[{x:305,y:290,r:10},{x:465,y:220,r:10},{x:635,y:270,r:10},{x:795,y:200,r:10}]
+  },
+  {
+    name:"4. Moving Bridge",
+    spawn:{x:40,y:330},
+    grounds:[
+      {x:0,y:400,w:190,h:60},
+      {x:290,y:400,w:200,h:60},
+      {x:650,y:400,w:350,h:60},
+      {x:200,y:320,w:120,h:18,moving:true,baseX:200,range:50,vx:1.1},
+      {x:450,y:260,w:120,h:18,moving:true,baseX:450,range:70,vx:-1.2},
+      {x:610,y:210,w:120,h:18,moving:true,baseX:610,range:50,vx:1.4}
+    ],
+    answerPlatforms:[
+      {x:110,y:170,w:180,h:24,answer:"while",label:"WHILE",color:"#4ade80"},
+      {x:730,y:160,w:180,h:24,answer:"when",label:"WHEN",color:"#60a5fa"}
+    ],
+    spikes:[{x:360,y:392,w:60,h:8},{x:560,y:392,w:60,h:8}],
+    bombs:[{x:840,y:374,r:14,vx:1.4,min:760,max:930}],
+    fallingBombs:[{x:390,y:0,r:13,vy:1.8,resetY:0}],
+    lavaPits:[{x:190,y:404,w:100,h:56},{x:490,y:404,w:160,h:56}],
+    coins:[{x:250,y:280,r:10},{x:510,y:220,r:10},{x:670,y:170,r:10}]
+  },
+  {
+    name:"5. Tunnel Run",
+    spawn:{x:40,y:330},
+    grounds:[
+      {x:0,y:400,w:1000,h:60},
+      {x:160,y:350,w:100,h:18},
+      {x:320,y:300,w:100,h:18},
+      {x:500,y:250,w:100,h:18},
+      {x:680,y:300,w:100,h:18},
+      {x:840,y:350,w:100,h:18}
+    ],
+    answerPlatforms:[
+      {x:90,y:150,w:180,h:24,answer:"when",label:"WHEN",color:"#60a5fa"},
+      {x:730,y:150,w:180,h:24,answer:"while",label:"WHILE",color:"#4ade80"}
+    ],
+    spikes:[{x:220,y:392,w:56,h:8},{x:420,y:392,w:56,h:8},{x:620,y:392,w:56,h:8}],
+    bombs:[{x:760,y:374,r:14,vx:-1.5,min:690,max:920}],
+    fallingBombs:[{x:280,y:10,r:13,vy:1.7,resetY:10},{x:620,y:20,r:13,vy:1.9,resetY:20}],
+    lavaPits:[],
+    coins:[{x:210,y:315,r:10},{x:370,y:265,r:10},{x:550,y:215,r:10},{x:730,y:265,r:10},{x:890,y:315,r:10}]
+  },
+  {
+    name:"6. Twin Towers",
+    spawn:{x:40,y:330},
+    grounds:[
+      {x:0,y:400,w:250,h:60},
+      {x:350,y:400,w:250,h:60},
+      {x:700,y:400,w:300,h:60},
+      {x:250,y:320,w:80,h:18},
+      {x:250,y:250,w:80,h:18},
+      {x:610,y:320,w:80,h:18},
+      {x:610,y:240,w:80,h:18},
+      {x:430,y:200,w:130,h:18}
+    ],
+    answerPlatforms:[
+      {x:110,y:165,w:180,h:24,answer:"while",label:"WHILE",color:"#4ade80"},
+      {x:710,y:165,w:180,h:24,answer:"when",label:"WHEN",color:"#60a5fa"}
+    ],
+    spikes:[{x:170,y:392,w:56,h:8},{x:450,y:392,w:56,h:8},{x:820,y:392,w:56,h:8}],
+    bombs:[{x:550,y:374,r:14,vx:1.6,min:470,max:660}],
+    fallingBombs:[{x:470,y:0,r:13,vy:2.0,resetY:0}],
+    lavaPits:[{x:250,y:404,w:100,h:56},{x:600,y:404,w:100,h:56}],
+    coins:[{x:290,y:285,r:10},{x:290,y:215,r:10},{x:650,y:285,r:10},{x:650,y:205,r:10},{x:495,y:160,r:10}]
+  },
+  {
+    name:"7. Lava Cross",
+    spawn:{x:40,y:330},
+    grounds:[
+      {x:0,y:400,w:180,h:60},
+      {x:260,y:400,w:150,h:60},
+      {x:500,y:400,w:170,h:60},
+      {x:770,y:400,w:230,h:60},
+      {x:180,y:320,w:90,h:18,moving:true,baseX:180,range:40,vx:1.1},
+      {x:410,y:270,w:90,h:18,moving:true,baseX:410,range:45,vx:-1.2},
+      {x:670,y:220,w:90,h:18,moving:true,baseX:670,range:45,vx:1.4}
+    ],
+    answerPlatforms:[
+      {x:100,y:150,w:180,h:24,answer:"when",label:"WHEN",color:"#60a5fa"},
+      {x:730,y:150,w:180,h:24,answer:"while",label:"WHILE",color:"#4ade80"}
+    ],
+    spikes:[{x:120,y:392,w:54,h:8},{x:560,y:392,w:54,h:8},{x:900,y:392,w:54,h:8}],
+    bombs:[{x:330,y:374,r:14,vx:1.5,min:280,max:390},{x:850,y:374,r:14,vx:-1.4,min:790,max:930}],
+    fallingBombs:[{x:540,y:0,r:13,vy:2.1,resetY:0}],
+    lavaPits:[{x:180,y:404,w:80,h:56},{x:410,y:404,w:90,h:56},{x:670,y:404,w:100,h:56}],
+    coins:[{x:225,y:285,r:10},{x:455,y:235,r:10},{x:715,y:185,r:10}]
+  },
+  {
+    name:"8. Bomb Rain Maze",
+    spawn:{x:40,y:330},
+    grounds:[
+      {x:0,y:400,w:1000,h:60},
+      {x:180,y:330,w:110,h:18},
+      {x:330,y:280,w:110,h:18},
+      {x:480,y:230,w:110,h:18},
+      {x:650,y:280,w:110,h:18},
+      {x:810,y:330,w:110,h:18}
+    ],
+    answerPlatforms:[
+      {x:95,y:140,w:180,h:24,answer:"while",label:"WHILE",color:"#4ade80"},
+      {x:725,y:140,w:180,h:24,answer:"when",label:"WHEN",color:"#60a5fa"}
+    ],
+    spikes:[{x:240,y:392,w:56,h:8},{x:420,y:392,w:56,h:8},{x:600,y:392,w:56,h:8},{x:780,y:392,w:56,h:8}],
+    bombs:[{x:530,y:374,r:14,vx:1.6,min:470,max:740}],
+    fallingBombs:[{x:220,y:0,r:13,vy:2.0,resetY:0},{x:420,y:20,r:13,vy:2.2,resetY:20},{x:620,y:10,r:13,vy:2.0,resetY:10},{x:820,y:30,r:13,vy:2.25,resetY:30}],
+    lavaPits:[],
+    coins:[{x:235,y:295,r:10},{x:385,y:245,r:10},{x:535,y:195,r:10},{x:705,y:245,r:10},{x:865,y:295,r:10}]
+  },
+  {
+    name:"9. Hidden Cavern",
+    spawn:{x:40,y:330},
+    grounds:[
+      {x:0,y:400,w:150,h:60},
+      {x:250,y:400,w:140,h:60},
+      {x:490,y:400,w:120,h:60},
+      {x:700,y:400,w:300,h:60},
+      {x:145,y:330,w:90,h:18},
+      {x:390,y:285,w:90,h:18},
+      {x:610,y:235,w:90,h:18},
+      {x:770,y:185,w:90,h:18}
+    ],
+    answerPlatforms:[
+      {x:110,y:130,w:180,h:24,answer:"when",label:"WHEN",color:"#60a5fa"},
+      {x:710,y:130,w:180,h:24,answer:"while",label:"WHILE",color:"#4ade80"}
+    ],
+    spikes:[{x:310,y:392,w:54,h:8},{x:535,y:392,w:54,h:8},{x:860,y:392,w:54,h:8}],
+    bombs:[{x:565,y:374,r:14,vx:1.6,min:500,max:660}],
+    fallingBombs:[{x:350,y:0,r:13,vy:2.2,resetY:0},{x:690,y:15,r:13,vy:2.3,resetY:15}],
+    lavaPits:[{x:150,y:404,w:100,h:56},{x:390,y:404,w:100,h:56},{x:610,y:404,w:90,h:56}],
+    coins:[{x:190,y:295,r:10},{x:435,y:250,r:10},{x:655,y:200,r:10},{x:815,y:150,r:10}]
+  },
+  {
+    name:"10. Final Fortress",
+    spawn:{x:40,y:330},
+    grounds:[
+      {x:0,y:400,w:180,h:60},
+      {x:260,y:400,w:120,h:60},
+      {x:470,y:400,w:120,h:60},
+      {x:680,y:400,w:120,h:60},
+      {x:890,y:400,w:110,h:60},
+      {x:170,y:320,w:90,h:18,moving:true,baseX:170,range:45,vx:1.2},
+      {x:380,y:270,w:90,h:18,moving:true,baseX:380,range:55,vx:-1.3},
+      {x:590,y:220,w:90,h:18,moving:true,baseX:590,range:60,vx:1.4},
+      {x:800,y:170,w:90,h:18,moving:true,baseX:800,range:40,vx:-1.5}
+    ],
+    answerPlatforms:[
+      {x:110,y:110,w:180,h:24,answer:"while",label:"WHILE",color:"#4ade80"},
+      {x:710,y:110,w:180,h:24,answer:"when",label:"WHEN",color:"#60a5fa"}
+    ],
+    spikes:[{x:115,y:392,w:54,h:8},{x:320,y:392,w:54,h:8},{x:530,y:392,w:54,h:8},{x:740,y:392,w:54,h:8}],
+    bombs:[{x:330,y:374,r:14,vx:1.7,min:270,max:410},{x:750,y:374,r:14,vx:-1.7,min:700,max:860}],
+    fallingBombs:[{x:230,y:0,r:13,vy:2.2,resetY:0},{x:500,y:10,r:13,vy:2.4,resetY:10},{x:770,y:5,r:13,vy:2.5,resetY:5}],
+    lavaPits:[{x:180,y:404,w:80,h:56},{x:380,y:404,w:90,h:56},{x:590,y:404,w:90,h:56},{x:800,y:404,w:90,h:56}],
+    coins:[{x:215,y:285,r:10},{x:425,y:235,r:10},{x:635,y:185,r:10},{x:845,y:135,r:10}]
+  }
+];
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const $ = id => document.getElementById(id);
+
+let roundIndex = 0;
+let score = 0;
+let coins = 0;
+let roundCoins = 0;
+let correctCount = 0;
+let lives = 3;
+let review = [];
+let animationId = null;
+let roundAnswered = false;
+
+const keys = { left:false, right:false };
+let player = null;
+let grounds = [];
+let answerPlatforms = [];
+let answerHelpers = [];
+let spikes = [];
+let bombs = [];
+let fallingBombs = [];
+let lavaPits = [];
+let coinItems = [];
+let spawnPoint = {x:40, y:330};
+
+function hideAll(){
+  ["startScreen","gameScreen","resultScreen"].forEach(id => $(id).classList.add("hidden"));
+}
+
+function startGame(){
+  roundIndex = 0;
+  score = 0;
+  coins = 0;
+  roundCoins = 0;
+  correctCount = 0;
+  lives = 3;
+  review = [];
+  hideAll();
+  $("gameScreen").classList.remove("hidden");
+  $("roundTotal").textContent = QUESTIONS.length;
+  loadRound();
+}
+
+function clone(obj){
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function randomizeAnswerPlatforms(platforms){
+  // Randomly swap the WHEN / WHILE labels and answers while keeping platform positions.
+  // This prevents students from memorising the left/right side.
+  const labels = [
+    {answer:"when", label:"WHEN", color:"#60a5fa"},
+    {answer:"while", label:"WHILE", color:"#4ade80"}
+  ];
+
+  if(Math.random() < 0.5){
+    labels.reverse();
+  }
+
+  return platforms.map((p, index) => ({
+    ...p,
+    answer: labels[index].answer,
+    label: labels[index].label,
+    color: labels[index].color
+  }));
+}
+
+function configureMovingPlatforms(grounds, roundIndex){
+  // Round 1-4: no moving platforms.
+  // Round 5 onwards: elevated small platforms start moving to increase difficulty.
+  grounds.forEach((g, i) => {
+    if(roundIndex < 4){
+      g.moving = false;
+      return;
+    }
+
+    const isElevatedSmallPlatform = g.y < 390 && g.w <= 130;
+    if(isElevatedSmallPlatform){
+      g.moving = true;
+      if(g.baseX === undefined) g.baseX = g.x;
+      if(g.range === undefined) g.range = 35 + Math.min(35, roundIndex * 5);
+      if(g.vx === undefined) g.vx = (i % 2 === 0 ? 1 : -1) * (0.9 + Math.min(0.7, roundIndex * 0.08));
+    }
+  });
+}
+
+function loadRound(){
+  roundAnswered = false;
+  roundCoins = 0;
+  $("roundCoins").textContent = roundCoins;
+  $("feedback").textContent = "";
+  $("feedback").style.color = "#334155";
+  $("nextBtn").classList.add("hidden");
+  $("finishBtn").classList.add("hidden");
+
+  const q = QUESTIONS[roundIndex];
+  const map = clone(MAPS[roundIndex]);
+
+  spawnPoint = map.spawn;
+  grounds = map.grounds;
+  configureMovingPlatforms(grounds, roundIndex);
+  answerPlatforms = randomizeAnswerPlatforms(map.answerPlatforms);
+  answerHelpers = [];
+  answerPlatforms.forEach(p => {
+    answerHelpers.push({
+      x: p.x + 25,
+      y: Math.min(p.y + 120, 330),
+      w: p.w - 50,
+      h: 14,
+      moving: false,
+      helper: true
+    });
+    answerHelpers.push({
+      x: p.x + 45,
+      y: Math.min(p.y + 60, 320),
+      w: p.w - 90,
+      h: 14,
+      moving: false,
+      helper: true
+    });
+  });
+  spikes = map.spikes;
+  bombs = map.bombs;
+  fallingBombs = map.fallingBombs;
+  lavaPits = map.lavaPits;
+  coinItems = map.coins.map(c => ({...c, taken:false}));
+
+  player = {
+    x: spawnPoint.x, y: spawnPoint.y,
+    w: 42, h: 62,
+    vx: 0, vy: 0,
+    speed: 4.6,
+    jump: -12.4,
+    onGround: false,
+    invincible: 0
+  };
+
+  $("roundNo").textContent = roundIndex + 1;
+  $("score").textContent = score;
+  $("coins").textContent = coins;
+  $("lives").textContent = lives;
+  $("correctCount").textContent = correctCount;
+  $("difficultyTag").textContent = roundIndex + 1;
+  $("sentence").textContent = q.sentence;
+  $("mapName").textContent = map.name;
+
+  cancelAnimationFrame(animationId);
+  gameLoop();
+}
+
+function rectsCollide(a,b){
+  return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
+function respawnPlayer(){
+  player.x = spawnPoint.x;
+  player.y = spawnPoint.y;
+  player.vx = 0;
+  player.vy = 0;
+  player.invincible = 80;
+}
+
+function loseLife(){
+  if(player.invincible > 0 || roundAnswered) return;
+  lives--;
+  $("lives").textContent = lives;
+  if(lives <= 0){
+    roundAnswered = true;
+    cancelAnimationFrame(animationId);
+    const q = QUESTIONS[roundIndex];
+    $("feedback").innerHTML = "💥 生命用完了！這一題算錯。<br>" + q.explain;
+    $("feedback").style.color = "#dc2626";
+    review.push({
+      round: roundIndex + 1,
+      map: MAPS[roundIndex].name,
+      sentence: q.sentence,
+      userAnswer: "no answer",
+      correctAnswer: q.answer,
+      correct: false,
+      explain: q.explain
+    });
+    if(roundIndex < QUESTIONS.length - 1) $("nextBtn").classList.remove("hidden");
+    else $("finishBtn").classList.remove("hidden");
+  } else {
+    respawnPlayer();
+  }
+}
+
+
+function warnNeedCoins(){
+  $("feedback").innerHTML = "🟡 先收集至少 <b>2 個金幣</b>，才可以選答案平台！";
+  $("feedback").style.color = "#b45309";
+  respawnPlayer();
+}
+
+function answerRound(answer){
+  if(roundAnswered) return;
+  roundAnswered = true;
+  cancelAnimationFrame(animationId);
+
+  const q = QUESTIONS[roundIndex];
+  const correct = answer === q.answer;
+
+  if(correct){
+    correctCount++;
+    score += 3;
+    coins += 12;
+    $("feedback").innerHTML = `✅ 答對了！你跳到 <b>${answer.toUpperCase()}</b>。<br>${q.explain}`;
+    $("feedback").style.color = "#15803d";
+  }else{
+    $("feedback").innerHTML = `❌ 答錯了！正確答案是 <b>${q.answer.toUpperCase()}</b>。<br>${q.explain}`;
+    $("feedback").style.color = "#dc2626";
+  }
+
+  $("score").textContent = score;
+  $("coins").textContent = coins;
+  $("correctCount").textContent = correctCount;
+
+  review.push({
+    round: roundIndex + 1,
+    map: MAPS[roundIndex].name,
+    sentence: q.sentence,
+    userAnswer: answer,
+    correctAnswer: q.answer,
+    correct,
+    explain: q.explain
+  });
+
+  if(roundIndex < QUESTIONS.length - 1) $("nextBtn").classList.remove("hidden");
+  else $("finishBtn").classList.remove("hidden");
+}
+
+function updateGame(){
+  if(player.invincible > 0) player.invincible--;
+
+  player.vx = 0;
+  if(keys.left) player.vx = -player.speed;
+  if(keys.right) player.vx = player.speed;
+
+  const prevX = player.x;
+  const prevY = player.y;
+
+  player.x += player.vx;
+  if(player.x < 0) player.x = 0;
+  if(player.x + player.w > canvas.width) player.x = canvas.width - player.w;
+
+  player.vy += 0.55;
+  if(player.vy > 13) player.vy = 13;
+  player.y += player.vy;
+  player.onGround = false;
+
+  grounds.forEach(g => {
+    if(g.moving){
+      g.x += g.vx;
+      if(g.x > g.baseX + g.range || g.x < g.baseX - g.range) g.vx *= -1;
+    }
+  });
+
+  const platforms = grounds.concat(answerHelpers).concat(answerPlatforms);
+  for(const p of platforms){
+    const wasAbove = prevY + player.h <= p.y + 2;
+    const isOverlappingX = player.x + player.w > p.x && player.x < p.x + p.w;
+    const isLanding = player.y + player.h >= p.y && player.y + player.h <= p.y + p.h + 16 && player.vy >= 0;
+    if(wasAbove && isOverlappingX && isLanding){
+      player.y = p.y - player.h;
+      player.vy = 0;
+      player.onGround = true;
+      if(p.moving) player.x += p.vx;
+      if(answerPlatforms.includes(p) && !roundAnswered){
+        if(roundCoins >= 2){
+          answerRound(p.answer);
+        }else{
+          warnNeedCoins();
+        }
+      }
+    }
+  }
+
+  if(player.y > canvas.height + 30){
+    loseLife();
+  }
+
+  coinItems.forEach(c => {
+    if(!c.taken){
+      const dx = player.x + player.w/2 - c.x;
+      const dy = player.y + player.h/2 - c.y;
+      if(Math.sqrt(dx*dx + dy*dy) < 28){
+        c.taken = true;
+        coins += 2;
+        roundCoins++;
+        $("coins").textContent = coins;
+        $("roundCoins").textContent = roundCoins;
+      }
+    }
+  });
+
+  bombs.forEach(b => {
+    b.x += b.vx;
+    if(b.x < b.min || b.x > b.max) b.vx *= -1;
+    const bombRect = {x:b.x-b.r, y:b.y-b.r, w:b.r*2, h:b.r*2};
+    if(rectsCollide(player, bombRect)) loseLife();
+  });
+
+  fallingBombs.forEach(b => {
+    b.y += b.vy;
+    if(b.y > 430) b.y = b.resetY;
+    const bombRect = {x:b.x-b.r, y:b.y-b.r, w:b.r*2, h:b.r*2};
+    if(rectsCollide(player, bombRect)) loseLife();
+  });
+
+  spikes.forEach(s => {
+    const overlapX = player.x + player.w > s.x && player.x < s.x + s.w;
+    const hitY = player.y + player.h > s.y;
+    if(overlapX && hitY) loseLife();
+  });
+
+  lavaPits.forEach(pit => {
+    const onPit = player.x + player.w > pit.x && player.x < pit.x + pit.w && player.y + player.h > pit.y;
+    if(onPit) loseLife();
+  });
+}
+
+function drawCloud(x,y,s){
+  ctx.fillStyle = "rgba(255,255,255,.85)";
+  ctx.beginPath();
+  ctx.arc(x,y,22*s,0,Math.PI*2);
+  ctx.arc(x+28*s,y,28*s,0,Math.PI*2);
+  ctx.arc(x+58*s,y,20*s,0,Math.PI*2);
+  ctx.fill();
+}
+
+function drawPlayer(x,y){
+  const flash = player.invincible > 0 && Math.floor(player.invincible / 6) % 2 === 0;
+  if(flash) return;
+
+  ctx.fillStyle = "#ffd166";
+  ctx.fillRect(x+8, y, 26, 22);
+  ctx.strokeStyle = "#1f2937";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(x+8, y, 26, 22);
+
+  ctx.fillStyle = "#1f2937";
+  ctx.fillRect(x+14, y+7, 3, 3);
+  ctx.fillRect(x+25, y+7, 3, 3);
+  ctx.fillRect(x+16, y+14, 10, 2);
+
+  ctx.fillStyle = "#2d8cff";
+  ctx.fillRect(x+6, y+22, 30, 22);
+  ctx.strokeRect(x+6, y+22, 30, 22);
+
+  ctx.fillStyle = "#ffd166";
+  ctx.fillRect(x, y+24, 6, 18);
+  ctx.fillRect(x+36, y+24, 6, 18);
+  ctx.strokeRect(x, y+24, 6, 18);
+  ctx.strokeRect(x+36, y+24, 6, 18);
+
+  ctx.fillStyle = "#334155";
+  ctx.fillRect(x+9, y+44, 10, 18);
+  ctx.fillRect(x+23, y+44, 10, 18);
+  ctx.strokeRect(x+9, y+44, 10, 18);
+  ctx.strokeRect(x+23, y+44, 10, 18);
+}
+
+function drawGame(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  drawCloud(90,70,1);
+  drawCloud(720,90,1.1);
+
+  lavaPits.forEach(p => {
+    ctx.fillStyle = "#ef4444";
+    ctx.fillRect(p.x, p.y, p.w, p.h);
+    ctx.fillStyle = "#fb923c";
+    for(let i=0;i<p.w;i+=18){
+      ctx.beginPath();
+      ctx.arc(p.x+i+8, p.y+4, 8, 0, Math.PI*2);
+      ctx.fill();
+    }
+  });
+
+  grounds.forEach(g => {
+    ctx.fillStyle = "#8b5e3c";
+    ctx.fillRect(g.x, g.y, g.w, g.h);
+    ctx.fillStyle = g.moving ? "#a78bfa" : "#84cc16";
+    ctx.fillRect(g.x, g.y, g.w, 8);
+  });
+
+  answerHelpers.forEach(h => {
+    ctx.fillStyle = "#94a3b8";
+    ctx.fillRect(h.x, h.y, h.w, h.h);
+    ctx.fillStyle = "#f8fafc";
+    ctx.fillRect(h.x, h.y, h.w, 5);
+  });
+
+  answerPlatforms.forEach(p => {
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x, p.y, p.w, p.h);
+    ctx.strokeStyle = "#1f2937";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(p.x, p.y, p.w, p.h);
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 28px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(p.label, p.x + p.w/2, p.y - 12);
+  });
+
+  coinItems.forEach(c => {
+    if(!c.taken){
+      ctx.fillStyle = "#ffd84d";
+      ctx.beginPath();
+      ctx.arc(c.x,c.y,c.r,0,Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = "#b45309";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = "#b45309";
+      ctx.font = "bold 14px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("$", c.x, c.y+5);
+    }
+  });
+
+  bombs.forEach(b => {
+    ctx.fillStyle = "#1f2937";
+    ctx.beginPath();
+    ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = "#475569";
+    ctx.stroke();
+    ctx.fillStyle = "#ef4444";
+    ctx.beginPath();
+    ctx.arc(b.x+8,b.y-10,5,0,Math.PI*2);
+    ctx.fill();
+  });
+
+  fallingBombs.forEach(b => {
+    ctx.fillStyle = "#111827";
+    ctx.beginPath();
+    ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = "#64748b";
+    ctx.stroke();
+    ctx.fillStyle = "#f87171";
+    ctx.beginPath();
+    ctx.arc(b.x+8,b.y-10,5,0,Math.PI*2);
+    ctx.fill();
+  });
+
+  spikes.forEach(s => {
+    for(let i=0;i<s.w;i+=13){
+      ctx.fillStyle = "#64748b";
+      ctx.beginPath();
+      ctx.moveTo(s.x+i, s.y+8);
+      ctx.lineTo(s.x+i+6, s.y);
+      ctx.lineTo(s.x+i+12, s.y+8);
+      ctx.closePath();
+      ctx.fill();
+    }
+  });
+
+  drawPlayer(player.x, player.y);
+}
+
+function gameLoop(){
+  updateGame();
+  drawGame();
+  if(!roundAnswered) animationId = requestAnimationFrame(gameLoop);
+}
+
+function nextRound(){
+  roundIndex++;
+  if(roundIndex < QUESTIONS.length){
+    lives = 3;
+    $("lives").textContent = lives;
+    loadRound();
+  }
+}
+
+function showResult(){
+  hideAll();
+  $("resultScreen").classList.remove("hidden");
+
+  $("finalScore").textContent = `${score} Score | ${coins} Coins 🟡`;
+
+  let msg = "";
+  if(correctCount >= 9) msg = "太厲害了！你已經是 when / while 闖關冠軍！";
+  else if(correctCount >= 7) msg = "做得很好！你能清楚分辨 short action 和 long action。";
+  else if(correctCount >= 5) msg = "不錯！記住 WHEN = short + long；WHILE = long + long。";
+  else msg = "繼續努力！先抓住兩個重點：WHEN 是短動作加長動作；WHILE 是兩個長動作。";
+  $("finalMessage").textContent = msg;
+
+  renderReview();
+}
+
+function renderReview(){
+  const box = $("reviewBox");
+  box.innerHTML = "<h2>作答紀錄</h2>";
+  review.forEach((item,i) => {
+    const div = document.createElement("div");
+    div.className = "review-item";
+    div.innerHTML = `
+      <strong>${i+1}. Round ${item.round}｜${item.map}</strong><br>
+      ${item.sentence}<br>
+      Your answer: <strong>${String(item.userAnswer).toUpperCase()}</strong> ${item.correct ? "✅" : "❌"}<br>
+      Correct answer: <strong>${item.correctAnswer.toUpperCase()}</strong><br>
+      ${item.explain}
+    `;
+    box.appendChild(div);
+  });
+}
+
+function toggleReview(){
+  $("reviewBox").classList.toggle("hidden");
+}
+
+function restartGame(){
+  cancelAnimationFrame(animationId);
+  hideAll();
+  $("startScreen").classList.remove("hidden");
+}
+
+window.addEventListener("keydown", e => {
+  if(e.key === "ArrowLeft") keys.left = true;
+  if(e.key === "ArrowRight") keys.right = true;
+  if(e.key === "ArrowUp" || e.key === " "){
+    if(player && player.onGround && !roundAnswered){
+      player.vy = player.jump;
+      player.onGround = false;
+    }
+  }
+});
+
+window.addEventListener("keyup", e => {
+  if(e.key === "ArrowLeft") keys.left = false;
+  if(e.key === "ArrowRight") keys.right = false;
+});
+
+function setupTouchButton(id, onDown, onUp){
+  const btn = document.getElementById(id);
+  if(!btn) return;
+
+  const start = e => {
+    e.preventDefault();
+    onDown();
+  };
+  const end = e => {
+    e.preventDefault();
+    onUp();
+  };
+
+  btn.addEventListener("touchstart", start, {passive:false});
+  btn.addEventListener("touchend", end, {passive:false});
+  btn.addEventListener("touchcancel", end, {passive:false});
+  btn.addEventListener("pointerdown", start);
+  btn.addEventListener("pointerup", end);
+  btn.addEventListener("pointerleave", end);
+}
+
+setupTouchButton("leftTouch", () => { keys.left = true; }, () => { keys.left = false; });
+setupTouchButton("rightTouch", () => { keys.right = true; }, () => { keys.right = false; });
+setupTouchButton("jumpTouch", () => {
+  if(player && player.onGround && !roundAnswered){
+    player.vy = player.jump;
+    player.onGround = false;
+  }
+}, () => {});
+
+</script>
+</body>
+</html>
